@@ -17,14 +17,14 @@
 
         <div class="container-fluid">
             <div class="row mt-5">
-                <div class="col text-center">
+                <div class="col text-center"> 
                     <button @click="loginWithGoogle" class="btn btn-outline-danger btn-lg">Login with Google</button>
                 </div>
             </div>
 
             <div class="row mt-5">
                 <div class="col text-center">
-                    <button class="btn btn-outline-info btn-lg">Login with Twitter</button>
+                    <button @click="loginWithTwitter" class="btn btn-outline-info btn-lg">Login with Twitter</button>
                 </div>
             </div>
         </div>
@@ -55,6 +55,28 @@ export default {
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(response => {
+          //console.log(response.user)
+
+          // dispatch setUser action
+          this.$store.dispatch("setUser", response.user);
+          // then redirect user to '/' page
+          this.$router.push("/");
+        })
+        .catch(error => {
+          this.errors.push(error.message);
+          // set loading to false
+          this.loading = false;
+        });
+    },
+    loginWithTwitter() {
+      //loading set to true
+      this.loading = true;
+      // clear old errors
+
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.TwitterAuthProvider())
         .then(response => {
           //console.log(response.user)
 
