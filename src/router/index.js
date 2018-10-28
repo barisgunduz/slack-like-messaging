@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Chat from '../pages/Chat';
 import Login from '../pages/Login';
+import auth from 'firebase/auth';
 
 Vue.use(Router)
 
@@ -11,7 +12,14 @@ export default new Router({
     {
       path: '/',
       name: 'chat',
-      component: Chat
+      component: Chat,
+      beforeEnter: (to, from, next) => {
+        if (!firebase.auth().currentUser) {
+          next('/login')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/login',
