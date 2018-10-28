@@ -6,13 +6,17 @@ Vue.use(Vuex)
 // create state that holds data
 const state = {
     // testing
-    currentUser: null
+    currentUser: null,
+    currentChannel: null
 }
 
 // update state data through mutations
 const mutations = {
     SET_USER(state, user) {
         state.currentUser = user;
+    },
+    SET_CURRENT_CHANNEL(state, channel){
+        state.currentChannel = channel
     }
 }
 
@@ -20,12 +24,16 @@ const mutations = {
 const actions = {
     setUser(state, user) {
         state.commit('SET_USER', user);
+    },
+    setCurrentChannel({commit}, channel){
+        commit('SET_CURRENT_CHANNEL', channel)
     }
 }
 
 // get data from state
 const getters = {
-    currentUser: state => state.currentUser
+    currentUser: state => state.currentUser,
+    currentChannel: state => state.currentChannel
 }
 
 // create vuex store
