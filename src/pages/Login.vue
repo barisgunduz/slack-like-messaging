@@ -32,13 +32,15 @@
 </template>
 
 <script>
-import auth from "firebase/auth";
+import auth from "firebase/auth"
+import database from 'firebase/database'
 export default {
   name: "login",
   data() {
     return {
       errors: [],
-      loading: false
+      loading: false,
+      usersRef: firebase.database().ref('users')
     };
   },
   computed: {
@@ -58,6 +60,9 @@ export default {
         .then(response => {
           //console.log(response.user)
 
+          // pass user to save in db
+          this.saveUserToUsersRef(response.user)
+
           // dispatch setUser action
           this.$store.dispatch("setUser", response.user);
           // then redirect user to '/' page
@@ -68,6 +73,13 @@ export default {
           // set loading to false
           this.loading = false;
         });
+    },
+    // save user to database
+    saveUserToUsersRef(user){
+        return this.usersRef.child(user.uid).set({
+            name: user.displayName,
+            avatar: user.photoURL
+        })
     },
     loginWithTwitter() {
       //loading set to true
