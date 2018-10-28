@@ -4,7 +4,7 @@
 
         <!-- show list of channels -->
         <div class="mt-4">
-            <button v-for="channel in channels" class="list-group-item list-group-item-action" type="button">
+            <button v-for="channel in channels" class="list-group-item list-group-item-action" type="button" :class="{'active': setActiveChannel(channel)}" @click="changeChannel(channel)">
                 {{channel.name}}
             </button>
         </div>
@@ -46,6 +46,7 @@
 
 <script>
 import database from "firebase/database";
+import { mapGetters } from "vuex";
 export default {
   name: "channels",
   data() {
@@ -58,6 +59,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["currentChannel"]),
     hasErrors() {
       return this.errors.length > 0;
     }
@@ -70,7 +72,7 @@ export default {
     },
     // add new channel
     addChannel() {
-        this.errors = []
+      this.errors = [];
       // get key to the newly creating channel
       let key = this.channelsRef.push().key;
       console.log("newly creating channel key: ", key);
@@ -92,22 +94,31 @@ export default {
     },
 
     addListeners() {
-        this.channelsRef.on('child_added', snapshot => {
-            //console.log('listening channelsref on child_added: ', snapshot.val())
-            this.channels.push(snapshot.val())
+      this.channelsRef.on("child_added", snapshot => {
+        //console.log('listening channelsref on child_added: ', snapshot.val())
+        this.channels.push(snapshot.val());
 
-            // set current channel
-            if(this.channels.length > 0){
-                // set the first one as current channel
-                this.channel = this.channels[0]
-                // dispatch current channel to store
-                this.$store.dispatch("setCurrentChannel", this.channel) // pick the first one
-            }
-        })
+        // set current channel
+        if (this.channels.length > 0) {
+          // set the first one as current channel
+          this.channel = this.channels[0];
+          // dispatch current channel to store
+          this.$store.dispatch("setCurrentChannel", this.channel); // pick the first one
+        }
+      });
+    },
+
+    // set active channel
+    setActiveChannel(channel) {
+      return channel.id === this.currentChannel.id;
+    },
+
+    changeChannel(channel) {
+      this.$store.dispatch("setCurrentChannel", channel);
     },
 
     detachListeners() {
-        this.channelsRef.off()
+      this.channelsRef.off();
     }
   },
 
