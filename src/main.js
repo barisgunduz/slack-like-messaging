@@ -11,12 +11,12 @@ Vue.config.productionTip = false;
 
 // Initialize Firebase
 var config = {
-  apiKey: "AIzaSyBuP_CIgQGWwpVHwz1r0or-c6HfcwbU-0s",
-  authDomain: "slack-like-messaging.firebaseapp.com",
-  databaseURL: "https://slack-like-messaging.firebaseio.com",
-  projectId: "slack-like-messaging",
-  storageBucket: "slack-like-messaging.appspot.com",
-  messagingSenderId: "417036004119"
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "..."
 };
 firebase.initializeApp(config);
 
