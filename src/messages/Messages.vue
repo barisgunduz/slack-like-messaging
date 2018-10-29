@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- show single message -->
-        <single-message></single-message>
+        <single-message :messages="messages"></single-message>
         <!-- message from -->
         <message-form></message-form>
     </div>
