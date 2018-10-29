@@ -1,6 +1,6 @@
-# slack
+# slack-like-messaging
 
-> A Vue.js project
+> A slack like messaging app with Vue.js and Firebase
 
 ## Build Setup
 
