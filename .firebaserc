@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "vuexslack"
+    "default": "slack-like-messaging"
   }
 }
