@@ -107,6 +107,7 @@ import {mapGetters} from 'vuex'
                 })
             },
 
+
             // set active channel
             setActiveChannel(channel) {
                 return channel.id === this.currentChannel.id
@@ -114,6 +115,7 @@ import {mapGetters} from 'vuex'
 
             // change channel
             changeChannel(channel) {
+                this.$store.dispatch('setPrivate', false)
                 this.$store.dispatch("setCurrentChannel", channel)
             },
 
