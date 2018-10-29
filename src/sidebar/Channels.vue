@@ -4,7 +4,7 @@
 
         <!-- show list of channels -->
         <div class="mt-4">
-            <button v-for="channel in channels" class="list-group-item list-group-item-action" type="button" :class="{'active': setActiveChannel(channel)}" @click="changeChannel(channel)">{{ channel.name }}</button>
+            <button v-for="channel in channels" class="list-group-item list-group-item-action" type="button" :class="{'active': setActiveChannel(channel)}" @click="changeChannel(channel)">{{ channel.name }} <span v-if="getNotification(channel) > 0 && channel.id !== currentChannel.id" class="float-right">{{ getNotification(channel) }}</span></button>
         </div>
 
         <!-- Modal -->
@@ -44,6 +44,7 @@
 <script>
 import database from 'firebase/database'
 import {mapGetters} from 'vuex'
+import mixin from '../mixins'
 
     export default {
         name: 'channels',
@@ -53,16 +54,28 @@ import {mapGetters} from 'vuex'
                 new_channel: '',
                 errors: [],
                 channelsRef: firebase.database().ref('channels'),
+                messagesRef: firebase.database().ref('messages'),
+                notifCount: [],
                 channels: [],
                 channel: null
             }
         },
 
+        mixins: [mixin],
+
         computed: {
-            ...mapGetters(['currentChannel']),
+            ...mapGetters(['currentChannel', 'isPrivate']),
 
             hasErrors() {
                 return this.errors.length > 0
+            }
+        },
+
+        watch: {
+            isPrivate() {
+                if(this.isPrivate) {
+                    this.resetNotifications()
+                }
             }
         },
 
@@ -83,6 +96,9 @@ import {mapGetters} from 'vuex'
                 // create new channel
                 this.channelsRef.child(key).update(newChannel)
                 .then(() => {
+                    // dispatch setCurrentChannel when a new channel is added
+                    this.$store.dispatch("setCurrentChannel", newChannel)
+                    
                     this.new_channel = ''
                     $("#channelModal").modal('hide')
                 })
@@ -104,9 +120,26 @@ import {mapGetters} from 'vuex'
                         // dispatch current channel to store
                         this.$store.dispatch("setCurrentChannel", this.channel) // pick the first one
                     }
+                    // add count listener to manage the notifications
+                    this.addCountListener(snapshot.key)
                 })
             },
 
+            addCountListener(channelId) {
+                this.messagesRef.child(channelId).on('value', snapshot => {
+                    this.handleNotifications(channelId, this.currentChannel.id, this.notifCount, snapshot)
+                })
+            },
+
+            getNotification(channel) {
+                let notif = 0
+                this.notifCount.forEach(el => {
+                    if(el.id === channel.id) {
+                        notif = el.notif
+                    }
+                })
+                return notif
+            },
 
             // set active channel
             setActiveChannel(channel) {
@@ -115,12 +148,28 @@ import {mapGetters} from 'vuex'
 
             // change channel
             changeChannel(channel) {
+                // reset notifications
+                this.resetNotifications()
                 this.$store.dispatch('setPrivate', false)
                 this.$store.dispatch("setCurrentChannel", channel)
+                // set channel
+                this.channel = channel
+            },
+
+            // reset notifications
+            resetNotifications() {
+                let index = this.notifCount.findIndex(el => el.id === this.channel.id)
+                if(index !== -1) {
+                    this.notifCount[index].total = this.notifCount[index].lastKnownTotal
+                    this.notifCount[index].notif = 0
+                }
             },
 
             detachListeners() {
                 this.channelsRef.off()
+                this.channels.forEach(el => {
+                    this.messagesRef.child(el.id).off()
+                })
             }
         },
 

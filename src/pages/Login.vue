@@ -2,7 +2,9 @@
     <div>
         <div class="jumbotron bg-primary text-white text-center">
             <h2 class="lead display-3">#SLACK#</h2>
+            <hr>
             <p>Realtime communication at it's best!</p>
+            <hr>
         </div>
 
         <!-- show loading statue -->
