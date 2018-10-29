@@ -18,16 +18,15 @@
 import Sidebar from '../sidebar/Sidebar'
 import Messages from '../messages/Messages'
 
-    export default {
-        name: 'chat',
+export default {
+    name: 'chat',
 
-        components: {Sidebar, Messages}
-
-    }
+    components: {Sidebar, Messages}
+}
 </script>
 
 <style scoped>
-    .sidebar {
+    .sidebar{
         width: 33.5%;
         display: block;
         float: left;
@@ -37,28 +36,11 @@ import Messages from '../messages/Messages'
         padding-top: 2em;
         overflow: scroll;
     }
-
-    .content {
+    .content{
         width: 66%;
         display: block;
         float: left;
         margin-left: 34%;
     }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
